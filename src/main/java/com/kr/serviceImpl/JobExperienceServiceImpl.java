@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,30 +28,6 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 	@Autowired
 	private RoleRepo roleRepo;
 	
-	
-	
-	
-	public static String calculatePeriod(LocalDate startDate, LocalDate endDate) {
-	    Period period = Period.between(startDate, endDate);
-	    int years = period.getYears();
-	    int months = period.getMonths();
-	    StringBuilder result = new StringBuilder();
-	    if (years > 0) {
-	        result.append(years).append(years > 1 ? " yrs " : " yr ");
-	    }
-	    if (months > 0) {
-	        result.append(months).append(months > 1 ? " mos" : " mo");
-	    }
-	    return result.toString().trim();
-	}
-		    
-	public static String getTotalPeriod(Period period) {
-        int totalMonths =(int) period.toTotalMonths();
-        int years = totalMonths / 12;
-        int months = totalMonths % 12;
-        return years + " yr " + months + " mos";
-    }
-
 	
 	@Override
 	public JobExperience addJob(Roles roles, String companyName) {
@@ -77,7 +52,7 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 	@Override
 	public Map<String, JSONObject> getJob() {
 	    Map<String, JSONObject> jsonMap= new HashMap<>();
-	    Map<String,List<JSONObject> > jobMap = new HashMap<>();
+	    Map<String,List<JSONObject>> roleMap = new HashMap<>();
 	    Map<String,Period> PeriodMap = new HashMap<>();
 
 
@@ -89,7 +64,7 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 	        JSONObject jobJson = new JSONObject();
 	        
 
-	        if (!jobMap.containsKey(job.getCompanyName())) {
+	        if (!roleMap.containsKey(job.getCompanyName())) {
 	            roleJson.put("role", job.getRoles().getRole());
 	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM");
 	            String month = job.getRoles().getStartDate().format(formatter);
@@ -104,13 +79,13 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 		        
 	            jobJson.put("company", job.getCompanyName());
 	            jobJson.put("img", job.getImg());
-	            jobJson.put("jobType", job.getRoles().getJobType());
 	            PeriodMap.put(job.getCompanyName(), Period.between(job.getRoles().getStartDate(), job.getRoles().getEndDate()));
+	            jobJson.put("jobType", getJobType(PeriodMap.get(job.getCompanyName())));
 		        String totalPeriod = getTotalPeriod(PeriodMap.get(job.getCompanyName()));
 		        jobJson.put("totalPeriod", totalPeriod);
 	            jobJson.put("roles", roleJsonList);
 	            jsonMap.put(job.getCompanyName(), jobJson);
-	            jobMap.put(job.getCompanyName(), roleJsonList);
+	            roleMap.put(job.getCompanyName(), roleJsonList);
 	        } else {
 	        	JSONObject j=jsonMap.get(job.getCompanyName());
 	        	roleJson.put("role", job.getRoles().getRole());
@@ -122,20 +97,52 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 		        roleJson.put("period",calculatePeriod(job.getRoles().getStartDate(),job.getRoles().getEndDate()));
 		        roleJson.put("city", job.getRoles().getCity());
 		        roleJson.put("state", job.getRoles().getState());
-		        roleJsonList= jobMap.get(job.getCompanyName());
+		        roleJsonList= roleMap.get(job.getCompanyName());
 		        roleJsonList.add(roleJson);
-	            j.put("jobType", job.getRoles().getJobType());
 		        j.put("roles", roleJsonList);
 		        PeriodMap.put(job.getCompanyName(),PeriodMap.get(job.getCompanyName()).plus(Period.between(job.getRoles().getStartDate(), job.getRoles().getEndDate())));
+	            j.put("jobType", getJobType(PeriodMap.get(job.getCompanyName())));
 		        String totalPeriod = getTotalPeriod(PeriodMap.get(job.getCompanyName()));
 		        j.put("totalPeriod", totalPeriod);
-	            jobMap.put(job.getCompanyName(), roleJsonList);
+	            roleMap.put(job.getCompanyName(), roleJsonList);
 	            
 	        }
 	        
 	    }
 	    return jsonMap;
 	}
+	
+	
+	public  String calculatePeriod(LocalDate startDate, LocalDate endDate) {
+	    Period period = Period.between(startDate, endDate);
+	    int years = period.getYears();
+	    int months = period.getMonths();
+	    StringBuilder result = new StringBuilder();
+	    if (years > 0) {
+	        result.append(years).append(years > 1 ? " yrs " : " yr ");
+	    }
+	    if (months > 0) {
+	        result.append(months).append(months > 1 ? " mos" : " mo");
+	    }
+	    return result.toString().trim();
+	}
+		    
+	public  String getTotalPeriod(Period period) {
+        int totalMonths =(int) period.toTotalMonths();
+        int years = totalMonths / 12;
+        int months = totalMonths % 12;
+        return years + " yr " + months + " mos";
+    }
+	
+	public  String getJobType(Period period) {
+        int totalMonths =(int) period.toTotalMonths();
+        if (totalMonths >= 12) {
+            return "Full-time";
+        } else {
+            return "Part-time";
+        }
+    }
+
 
 
 

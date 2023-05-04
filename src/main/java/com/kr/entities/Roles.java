@@ -28,7 +28,6 @@ public class Roles {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer roleId;
 	private String role;
-	private String jobType;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private Period period;
