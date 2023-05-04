@@ -114,22 +114,22 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 	
 	
 	public  String calculatePeriod(LocalDate startDate, LocalDate endDate) {
-	    Period period = Period.between(startDate, endDate);
+	   Period period = Period.between(startDate, endDate);
 	    int years = period.getYears();
 	    int months = period.getMonths();
-	    StringBuilder result = new StringBuilder();
+	     StringBuilder result = new StringBuilder();
 	    if (years > 0) {
 	        result.append(years).append(years > 1 ? " yrs " : " yr ");
-	    }
+	     }
 	    if (months > 0) {
 	        result.append(months).append(months > 1 ? " mos" : " mo");
-	    }
+	     }
 	    return result.toString().trim();
 	}
 		    
 	public  String getTotalPeriod(Period period) {
         int totalMonths =(int) period.toTotalMonths();
-        int years = totalMonths / 12;
+         int years = totalMonths / 12;
         int months = totalMonths % 12;
         return years + " yr " + months + " mos";
     }
