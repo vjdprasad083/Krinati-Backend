@@ -17,6 +17,8 @@ public interface JobExperienceService {
 	JobExperience addJob(Roles roles,String companyName);
 	
 	Map<String, JSONObject> getJob();
+	
+	void deleteJob(Integer jobId);
 
 
 }

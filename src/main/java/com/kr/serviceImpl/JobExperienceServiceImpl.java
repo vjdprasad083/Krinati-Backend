@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.kr.entities.JobExperience;
 import com.kr.entities.Roles;
+import com.kr.exception.DetailsNotFoundException;
 import com.kr.repo.JobExperienceRepo;
 import com.kr.repo.RoleRepo;
 import com.kr.service.JobExperienceService;
@@ -142,6 +144,21 @@ public class JobExperienceServiceImpl implements JobExperienceService {
             return "Part-time";
         }
     }
+
+
+
+	@Override
+	public void deleteJob(Integer jobId)throws DetailsNotFoundException {
+		
+		Optional<JobExperience> job = jobExperienceRepo.findById(jobId);
+		if(job.isPresent()) {
+			jobExperienceRepo.deleteById(jobId);
+		}
+		else {
+			throw new DetailsNotFoundException("Job not Found");
+		}
+		
+	}
 
 
 

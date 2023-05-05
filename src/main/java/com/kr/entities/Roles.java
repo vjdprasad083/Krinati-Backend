@@ -33,6 +33,8 @@ public class Roles {
 	private Period period;
 	private String city;
 	private String state;
+	
+	
 
 
 }
