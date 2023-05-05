@@ -14,7 +14,7 @@ Install npm<br />
 Install spring<br />
 Install java<br />
 Install any data base
-#usage
+# usage
 1.Open the project in your IDE.<br />
 2.Connect your database at /Krinati-Backend/src/main/resources/application.properties file<br />
 3.Run the project<br />
