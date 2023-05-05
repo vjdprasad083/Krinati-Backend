@@ -153,6 +153,7 @@ public class JobExperienceServiceImpl implements JobExperienceService {
 		Optional<JobExperience> job = jobExperienceRepo.findById(jobId);
 		if(job.isPresent()) {
 			jobExperienceRepo.deleteById(jobId);
+			throw new DetailsNotFoundException(" One Job deleted");
 		}
 		else {
 			throw new DetailsNotFoundException("Job not Found");
